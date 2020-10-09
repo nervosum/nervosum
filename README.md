@@ -1,4 +1,4 @@
-# nervosum
+# Nervosum
 
 Nervosum aims to become a machine learning platform in which we incorporate lessons learned from productionalizing machine learned models in various contexts. It offers tooling and platform components to unify a local workflow of data scientists with CI/CD best practices from the software engineering field.
 
