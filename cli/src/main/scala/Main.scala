@@ -1,3 +1,4 @@
+import ai.nervosum.buildinfo.BuildInfo
 import org.rogach.scallop._
 
 object Main {
@@ -16,7 +17,7 @@ object Main {
     val build: Subcommand = new Subcommand("build")
     build.descr("Builds a Docker image for a model")
 
-    version("Nervosum CLI 0.0.1")
+    version(s"Nervosum CLI ${BuildInfo.version}")
     addSubcommand(build)
     verify()
   }
