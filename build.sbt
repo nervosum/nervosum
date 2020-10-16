@@ -1,4 +1,6 @@
 name := "nervosum"
+Global / organization := "ai.nervosum"
+Global / organizationHomepage := Some(url("https://github.com/orgs/nervosum"))
 
 Global / scalaVersion := "2.11.12"
 
