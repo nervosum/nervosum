@@ -1,0 +1,59 @@
+import logging
+import docker
+from dateutil import parser as datetime_parser
+from nervosum.core.list import get_images, filter_images
+
+import signal
+import sys
+
+logger = logging.getLogger(__name__)
+logger.addHandler(logging.StreamHandler())
+logger.setLevel("DEBUG")
+
+client = docker.from_env()
+
+
+def execute(args, parser):
+    conf = {}
+
+    images = get_images()
+
+    if args.name:
+        images = filter_images(images, [f'name={args.name}'])
+
+    if args.tag:
+        images = filter_images(images, [f'tag={args.tag}'])
+    else:
+        logger.warning("No container name given, running latest image.")
+
+    latest_image = filter_latest_image(images)
+
+    if latest_image.labels['mode']=='http':
+        conf['ports'] = {'5000/tcp': 5000}
+
+    logger.info(f"Running {latest_image}")
+    container = client.containers.run(
+        latest_image,
+        detach=True,
+        **conf)
+
+    set_kill_signal(container)
+
+    while True:
+        continue
+
+
+def set_kill_signal(container):
+
+    def signal_handler(sig, frame):
+        logger.info("\rStopping container...")
+        container.stop()
+        logger.info("Done")
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+
+def filter_latest_image(images):
+    latest_image = max(images, key=lambda x: datetime_parser.parse(x.attrs['Created']))
+    return latest_image
