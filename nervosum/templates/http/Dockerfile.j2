@@ -1,0 +1,31 @@
+# First build step
+FROM python:3.7-slim AS builder
+
+# Install python libraries of wrapper
+COPY ./wrapper_requirements.txt /
+RUN mkdir /wrapper
+RUN pip install --target=/wrapper -r /wrapper_requirements.txt
+
+{% if requirements_file is defined %}
+COPY ./{{ requirements_file }} /
+RUN mkdir /install
+RUN pip install --target=/install -r /{{ requirements_file }}
+{% endif %}
+
+# Second build step
+FROM gcr.io/distroless/python3-debian10
+
+# Copy app and installed libraries to main image
+COPY . /app
+COPY --from=builder /wrapper /wrapper
+
+{% if requirements_file is defined %}
+COPY --from=builder /install /install
+ENV PYTHONPATH=/install:/wrapper:/app
+{% else %}
+ENV PYTHONPATH=/wrapper:/app
+{% endif %}
+
+EXPOSE 5000
+WORKDIR /app
+CMD ["./wrapper.py"]
