@@ -1,7 +1,8 @@
+from pathlib import Path
+from typing import Any, Dict, Union
 
 import yaml
-from typing import Union, Dict, Any
-from pathlib import Path
+
 
 def read_yaml(config_file: Union[Path, str]) -> Dict[str, Any]:
     """

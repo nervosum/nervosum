@@ -15,6 +15,6 @@ assignees: ''
 
 # Out of Scope
 
-* 
+*
 
 # Refinement remarks and questions
