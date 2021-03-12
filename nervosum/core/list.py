@@ -1,10 +1,9 @@
 import logging
-import docker
 from datetime import datetime
-from dateutil import parser as datetime_parser
 
+import docker
 import timeago
-
+from dateutil import parser as datetime_parser
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -12,19 +11,25 @@ logger.setLevel("DEBUG")
 
 client = docker.from_env()
 
+
 def get_nervosum_images():
-    return client.images.list(filters={'reference':'nervosum/*'})
+    return client.images.list(filters={"reference": "nervosum/*"})
 
 
 def pretty_print_images(images):
     now = datetime.utcnow()
     print(f"{'TAG':15s}{'NAME':15s}{'CREATED':20s}LABELS")
     for image in images:
-        time_last_run = datetime_parser.parse(image.attrs['Created']).replace(tzinfo=None)
+        time_last_run = datetime_parser.parse(image.attrs["Created"]).replace(
+            tzinfo=None
+        )
         time_since_last_run = timeago.format(time_last_run, now)
 
-        labels = ", ".join(f"{k}='{v}'" for k,v in image.labels.items())
-        print(f"{image.short_id[7:]:15s}{image.labels.get('name'):15s}{time_since_last_run:20s}{labels}")
+        labels = ", ".join(f"{k}='{v}'" for k, v in image.labels.items())
+        print(
+            f"{image.short_id[7:]:15s}{image.labels.get('name'):15s}"
+            f"{time_since_last_run:20s}{labels}"
+        )
 
 
 def filter_images(images, filters):
@@ -33,9 +38,9 @@ def filter_images(images, filters):
         filters = list(filters)
 
     for a_filter in filters:
-        k, v = a_filter.split('=')
-        if k=='id':
-            images = filter(lambda image: v in image.id, images, )
+        k, v = a_filter.split("=")
+        if k == "id":
+            images = filter(lambda image: v in image.id, images,)
         else:
             images = filter(lambda image: v in image.labels.get(k), images)
     return images
