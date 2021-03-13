@@ -1,9 +1,13 @@
+import argparse
 import logging
 import signal
 import sys
+from typing import Any, Iterator
 
 import docker
 from dateutil import parser as datetime_parser
+from docker.models.containers import Container
+from docker.models.images import Image
 
 from nervosum.core.list import filter_images, get_images
 
@@ -14,7 +18,7 @@ logger.setLevel("DEBUG")
 client = docker.from_env()
 
 
-def execute(args, parser):
+def execute(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     conf = {}
 
     images = get_images()
@@ -34,15 +38,15 @@ def execute(args, parser):
 
     logger.info(f"Running {latest_image}")
     container = client.containers.run(latest_image, detach=True, **conf)
-
+    print(type(container))
     set_kill_signal(container)
 
     while True:
         continue
 
 
-def set_kill_signal(container):
-    def signal_handler(sig, frame):
+def set_kill_signal(container: Container):
+    def signal_handler(sig: int, frame: Any) -> None:
         logger.info("\rStopping container...")
         container.stop()
         logger.info("Done")
@@ -51,7 +55,7 @@ def set_kill_signal(container):
     signal.signal(signal.SIGINT, signal_handler)
 
 
-def filter_latest_image(images):
+def filter_latest_image(images: Iterator[Image]) -> Image:
     latest_image = max(
         images, key=lambda x: datetime_parser.parse(x.attrs["Created"])
     )

@@ -1,10 +1,12 @@
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Union
 
 import yaml
 
+from nervosum.core.config import Config
 
-def read_yaml(config_file: Union[Path, str]) -> Dict[str, Any]:
+
+def read_yaml(config_file: Union[Path, str]) -> Config:
     """
     Function to parse a config file with the yml extension
 
@@ -21,4 +23,4 @@ def read_yaml(config_file: Union[Path, str]) -> Dict[str, Any]:
         # scalar values to Python the dictionary format
         config = yaml.load(file, Loader=yaml.FullLoader)
 
-    return config
+    return Config(**config)

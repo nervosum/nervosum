@@ -1,9 +1,12 @@
+import argparse
 import logging
 from datetime import datetime
+from typing import Iterator, List, Optional, Union
 
 import docker
 import timeago
 from dateutil import parser as datetime_parser
+from docker.models.images import Image
 
 logger = logging.getLogger(__name__)
 logger.addHandler(logging.StreamHandler())
@@ -12,11 +15,11 @@ logger.setLevel("DEBUG")
 client = docker.from_env()
 
 
-def get_nervosum_images():
-    return client.images.list(filters={"reference": "nervosum/*"})
+def get_nervosum_images() -> Iterator[Image]:
+    return iter(client.images.list(filters={"reference": "nervosum/*"}))
 
 
-def pretty_print_images(images):
+def pretty_print_images(images: Iterator[Image]) -> None:
     now = datetime.utcnow()
     print(f"{'TAG':15s}{'NAME':15s}{'CREATED':20s}LABELS")
     for image in images:
@@ -32,7 +35,9 @@ def pretty_print_images(images):
         )
 
 
-def filter_images(images, filters):
+def filter_images(
+    images: Iterator[Image], filters: Union[List[str], str]
+) -> Iterator[Image]:
 
     if not isinstance(filters, list):
         filters = list(filters)
@@ -46,14 +51,16 @@ def filter_images(images, filters):
     return images
 
 
-def get_images(filters=None):
+def get_images(
+    filters: Optional[Union[List[str], str]] = None
+) -> Iterator[Image]:
     images = get_nervosum_images()
-    if filters:
+    if filters is not None:
         images = filter_images(images, filters)
     return images
 
 
-def execute(args, parser):
+def execute(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
     images = get_nervosum_images()
     if args.filter:
         images = filter_images(images, args.filter)
