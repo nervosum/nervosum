@@ -40,32 +40,31 @@ def predict() -> Dict[str, Any]:
 
 
 @app.route("/schema", methods=['GET'])
-def schema():
+def schema()-> Dict[str,Any]:
     """
     Schema endpoint
     Returns:
         The schema for the predict method
     """
-    # page = request.args.get('page', default=1, type=int)
 
-    return {'input_schema' : {{ input_schema }} }
+    return {"input_schema" : {{ input_schema }} }
 
 
 {% if metadata is defined %}
 @app.route("/metadata", methods=['GET'])
-def metadata():
+def metadata() -> Dict[str,Any]:
     """
     Metadata endpoint
     Returns:
         Metadata of the model that is used for predicting.
     """
-    return {{ metadata }}
+    return {"metadata" : {{ metadata }} }
 {% endif %}
 
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return redirect(url_for('index'))
+    return redirect(url_for("index"))
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

@@ -7,6 +7,6 @@ setup(
     python_requires=">=3.7",
     entry_points={"console_scripts": ["nervosum = nervosum.cli.main:main"]},
     package_data={"nervosum": ["templates/**/*.j2", "templates/**/*.txt"]},
-    install_requires=["pyyaml", "jinja2", "docker", "timeago"],
+    install_requires=["pyyaml", "jinja2", "docker", "timeago", "pydantic"],
     extras_require={"dev": ["pre-commit", "pytest", "pytest-cov"]},
 )

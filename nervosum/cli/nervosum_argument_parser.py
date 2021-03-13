@@ -2,7 +2,7 @@ import argparse
 from textwrap import dedent
 
 
-def generate_parser():
+def generate_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description="nervosum is a tool to help you deploy python ML models"
     )
@@ -16,7 +16,7 @@ def generate_parser():
     return p
 
 
-def configure_parser_build(sub_parsers):
+def configure_parser_build(sub_parsers: argparse._SubParsersAction) -> None:
     help = "Build a model class into a docker image"
     descr = help
 
@@ -43,7 +43,7 @@ def configure_parser_build(sub_parsers):
     p.set_defaults(nervosum_module="nervosum.core.build")
 
 
-def configure_parser_run(sub_parsers):
+def configure_parser_run(sub_parsers: argparse._SubParsersAction) -> None:
     help = "run a docker image"
     descr = help
 
@@ -65,7 +65,7 @@ def configure_parser_run(sub_parsers):
     p.set_defaults(nervosum_module="nervosum.core.run")
 
 
-def configure_parser_list(sub_parsers):
+def configure_parser_list(sub_parsers: argparse._SubParsersAction) -> None:
     help = "List nervosum images"
     descr = help
 
