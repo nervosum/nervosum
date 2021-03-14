@@ -2,7 +2,8 @@ import argparse
 import logging
 import signal
 import sys
-from typing import Any, Iterator
+import types
+from typing import Iterator
 
 import docker
 from dateutil import parser as datetime_parser
@@ -46,7 +47,7 @@ def execute(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
 
 
 def set_kill_signal(container: Container):
-    def signal_handler(sig: int, frame: Any) -> None:
+    def signal_handler(sig: int, frame: types.FrameType) -> None:
         logger.info("\rStopping container...")
         container.stop()
         logger.info("Done")
