@@ -57,10 +57,10 @@ def configure_parser_run(sub_parsers: argparse._SubParsersAction) -> None:
         "run", description=descr, help=help, epilog=example,
     )
     p.add_argument(
-        "-t", "--tag", action="store", help="Tag to image",
+        "-t", "--tag", action="store", help="Tag of image to run",
     )
     p.add_argument(
-        "-n", "--name", action="store", help="Tag to image",
+        "-n", "--name", action="store", help="Name of image to run",
     )
     p.set_defaults(nervosum_module="nervosum.core.run")
 
