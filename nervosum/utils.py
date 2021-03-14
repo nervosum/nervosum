@@ -3,7 +3,7 @@ from typing import Union
 
 import yaml
 
-from nervosum.core.config import Config
+from nervosum.config import Config
 
 
 def read_yaml(config_file: Union[Path, str]) -> Config:

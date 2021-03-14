@@ -19,7 +19,7 @@ logger.setLevel("DEBUG")
 client = docker.from_env()
 
 
-def execute(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
+def execute(args: argparse.Namespace) -> None:
     conf = {}
 
     images = get_images()

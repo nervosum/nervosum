@@ -60,7 +60,7 @@ def get_images(
     return images
 
 
-def execute(args: argparse.Namespace, parser: argparse.ArgumentParser) -> None:
+def execute(args: argparse.Namespace) -> None:
     images = get_nervosum_images()
     if args.filter:
         images = filter_images(images, args.filter)
