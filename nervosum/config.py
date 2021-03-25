@@ -27,6 +27,7 @@ class Config(BaseModel):
     requirements: str
     input_schema: List[Dict[str, str]]
     output_schema: Union[List[Dict[str, str]], Dict[str, str]]
+    platform_tag: Optional[str] = None
 
     @validator("src")
     def replace_slash_with_dot(cls, x: str):

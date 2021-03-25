@@ -1,0 +1,39 @@
+FROM ubuntu:latest
+
+# Install OpenJDK 8
+RUN \
+  apt-get update && \
+  apt-get install -y openjdk-8-jdk && \
+  rm -rf /var/lib/apt/lists/*
+
+# Install Python
+RUN \
+    apt-get update && \
+    apt-get install -y python3 python3-dev python3-pip python3-virtualenv && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && apt-get install -y zip
+
+# Install python libraries of wrapper
+COPY ./wrapper-requirements.txt /
+RUN pip3 install -r /wrapper-requirements.txt
+
+RUN mkdir /app
+WORKDIR /app
+{% if requirements_file is defined %}
+COPY ./{{ requirements_file }} /app/requirements.txt
+
+RUN pip3 install --target=./model_dependencies --platform={{ platform_tag }} --only-binary=:all: -r ./requirements.txt
+
+RUN cd ./model_dependencies && zip -r ../model_dependencies.zip .
+{% endif %}
+
+COPY . /app
+
+ENV PATH=/usr/local/lib/python3.8/dist-packages/pyspark/bin/:/usr/local/lib/python3.8/:$PATH
+ENV PYSPARK_PYTHON=python3
+ENV PYTHONPATH=$PYTHONPATH:/app
+
+CMD spark-submit  --master local[*] \
+    --py-files ./model_dependencies.zip \
+    wrapper.py --source_path data/input.csv --output_path data/output.csv

@@ -1,0 +1,54 @@
+import argparse
+import logging
+import time
+
+from pyspark.context import SparkContext, SparkConf
+from pyspark.sql.functions import pandas_udf
+from pyspark.sql.session import SparkSession
+from pyspark.sql.types import IntegerType
+from pyspark.sql.types import StructType, StructField
+
+from pydzipimport_linux import install
+
+install()
+
+from {{ src }}.{{ model_module }} import {{ model_class }}
+
+logger = logging.getLogger(__name__)
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--source_path", help="CSV source path")
+    parser.add_argument("--output_path", help="CSV output path")
+    args = parser.parse_args()
+    install()
+
+    if args.source_path and args.output_path:
+        conf = SparkConf().setAppName("Nervosum-Job")
+        sc = SparkContext(conf=conf)
+
+        spark = SparkSession(sc)
+        spark.conf.set("spark.sql.execution.arrow.pyspark.enabled", "true")
+
+        start = time.time()
+
+        # load data
+        spark_df = spark.read.option("header", True).csv(args.source_path)
+
+        def predict(iterator):
+            install()
+            model = {{ model_class }}()
+
+            import pandas as pd
+            for df in iterator:
+                yield pd.DataFrame(model.predict(df))
+
+        predictions = spark_df.mapInPandas(predict, schema="prediction int")
+        predictions.write.mode("overwrite").format("csv").save(args.output_path)
+
+        logger.info(f"TIME: {time.time() - start}")
+    else:
+        logger.info(
+            "Not all arguments were given."
+            " Please specify source and output path"
+        )
