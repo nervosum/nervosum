@@ -2,8 +2,7 @@ import argparse
 import logging
 import signal
 import sys
-import types
-from typing import Iterator
+from typing import Any, Iterator
 
 import docker
 from dateutil import parser as datetime_parser
@@ -37,19 +36,19 @@ def execute(args: argparse.Namespace) -> None:
     if latest_image.labels["mode"] == "http":
         conf["ports"] = {"5000/tcp": 5000}
 
-    logger.info(f"Running {latest_image}")
+    logger.info(f"Running image {latest_image.short_id}")
+
     container = client.containers.run(latest_image, detach=True, **conf)
-    print(type(container))
-    set_kill_signal(container)
-
-    while True:
-        continue
+    add_kill_signal(container)
+    for a in container.attach(stdout=True, stream=True):
+        print(a.decode("utf-8"), end="")
 
 
-def set_kill_signal(container: Container):
-    def signal_handler(sig: int, frame: types.FrameType) -> None:
+def add_kill_signal(container: Container):
+    # def signal_handler(sig: int, frame: types.FrameType) -> None:
+    def signal_handler(*args: Any, **kwargs: Any) -> None:
         logger.info("\rStopping container...")
-        container.stop()
+        container.stop(timeout=0)
         logger.info("Done")
         sys.exit(0)
 
