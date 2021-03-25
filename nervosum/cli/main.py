@@ -2,7 +2,7 @@
 
 import importlib
 
-from nervosum.cli.nervosum_argument_parser import generate_parser
+from nervosum.cli.nervosum_parser import generate_parser
 
 
 def main() -> None:
