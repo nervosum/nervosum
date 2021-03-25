@@ -1,9 +1,7 @@
 from nervosum.config import Config
-from nervosum.core.builders.image_builder import (
-    BatchImageBuilder,
-    FlaskImageBuilder,
-    ImageBuilder,
-)
+from nervosum.core.builders.batch_image_builder import BatchImageBuilder
+from nervosum.core.builders.flask_image_builder import FlaskImageBuilder
+from nervosum.core.builders.image_builder import ImageBuilder
 
 
 class Director:
