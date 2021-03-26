@@ -2,6 +2,11 @@ import argparse
 from textwrap import dedent
 
 
+def parse_args(args=None) -> argparse.Namespace:
+    p = generate_parser()
+    return p.parse_args(args)
+
+
 def generate_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description="nervosum is a tool to help you deploy python ML models"
@@ -44,7 +49,7 @@ def configure_parser_build(sub_parsers: argparse._SubParsersAction) -> None:
 
 
 def configure_parser_run(sub_parsers: argparse._SubParsersAction) -> None:
-    help = "run a docker image"
+    help = "Run a docker image"
     descr = help
 
     example = dedent(
