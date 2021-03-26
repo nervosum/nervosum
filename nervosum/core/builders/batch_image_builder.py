@@ -1,14 +1,14 @@
 import os
 
-from nervosum import utils
-from nervosum.config import Config
+from nervosum.config import NervosumConfig
+from nervosum.core import utils
 from nervosum.core.builders.image_builder import ImageBuilder, logger
 
 
 class BatchImageBuilder(ImageBuilder):
     mode = "batch"
 
-    def generate_wrapper_files(self, config: Config) -> None:
+    def generate_wrapper_files(self, config: NervosumConfig) -> None:
         logger.info("Copying wrapper files")
 
         wrapper_requirements = utils.render_template(

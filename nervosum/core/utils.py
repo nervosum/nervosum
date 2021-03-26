@@ -5,32 +5,9 @@ from pathlib import Path
 from shutil import copyfile, copytree, rmtree
 from typing import Any, Union
 
-import yaml
 from jinja2 import Template
 
-from nervosum.config import Config
-
 logger = logging.getLogger(__name__)
-
-
-def read_yaml(config_file: Union[Path, str]) -> Config:
-    """
-    Function to parse a config file with the yml extension
-
-    Args:
-        config_file (pathlib.Path, str): The file to parse
-
-    Returns:
-        A dict object containing all key value pairs as defined in the config
-        file
-
-    """
-    with open(config_file) as file:
-        # The FullLoader parameter handles the conversion from YAML
-        # scalar values to Python the dictionary format
-        config = yaml.load(file, Loader=yaml.FullLoader)
-
-    return Config(**config)
 
 
 def create_dir(dir: Union[str, Path], mode: str = "overwrite"):
