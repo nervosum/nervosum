@@ -25,7 +25,7 @@ class ImageBuilder(ABC):
 
     def copy_client_files_to_build_dir(self) -> None:
         logger.info("Copying client files")
-        utils.create_dir(self.target_dir)
+        utils.create_dir(self.target_dir, mode="skip")
         utils.copy_contents_to_target_dir(self.source_dir, self.target_dir)
 
     def build_image(self, config: Config) -> None:

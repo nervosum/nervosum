@@ -13,7 +13,6 @@ def execute(args: argparse.Namespace):
     config = read_yaml(config_file)
 
     with tempfile.TemporaryDirectory(dir=os.path.abspath(args.dir)) as td:
-
         if config.mode == "batch":
             builder: ImageBuilder = BatchImageBuilder(
                 source_dir=args.dir, target_dir=td

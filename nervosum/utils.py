@@ -73,7 +73,7 @@ def render_template(mode: str, file: str, **kwargs: Any) -> str:
 
 
 def get_pkg_file(mode: str, file: str) -> bytes:
-    file_path = os.path.join("/templates/", mode, file)
+    file_path = os.path.join("templates", mode, file)
     content = pkgutil.get_data("nervosum", file_path)
     if content is not None:
         return content
