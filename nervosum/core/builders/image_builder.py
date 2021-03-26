@@ -4,8 +4,8 @@ from abc import ABC, abstractmethod
 
 import docker
 
-from nervosum import utils
-from nervosum.config import Config
+from nervosum.config import NervosumConfig
+from nervosum.core import utils
 
 logger = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class ImageBuilder(ABC):
         self.target_dir = target_dir
 
     @abstractmethod
-    def generate_wrapper_files(self, config: Config) -> None:
+    def generate_wrapper_files(self, config: NervosumConfig) -> None:
         pass
 
     def copy_client_files_to_build_dir(self) -> None:
@@ -28,7 +28,7 @@ class ImageBuilder(ABC):
         utils.create_dir(self.target_dir, mode="skip")
         utils.copy_contents_to_target_dir(self.source_dir, self.target_dir)
 
-    def build_image(self, config: Config) -> None:
+    def build_image(self, config: NervosumConfig) -> None:
         logger.info("Building docker image")
 
         os.chdir(self.target_dir)

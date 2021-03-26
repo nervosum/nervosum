@@ -2,15 +2,15 @@ import argparse
 import os
 import tempfile
 
+from nervosum.config import get_config
 from nervosum.core.builders.batch_image_builder import BatchImageBuilder
 from nervosum.core.builders.flask_image_builder import FlaskImageBuilder
 from nervosum.core.builders.image_builder import ImageBuilder
-from nervosum.utils import read_yaml
 
 
 def execute(args: argparse.Namespace):
     config_file = os.path.join(args.dir, args.c)
-    config = read_yaml(config_file)
+    config = get_config(config_file)
 
     with tempfile.TemporaryDirectory(dir=os.path.abspath(args.dir)) as td:
         if config.mode == "batch":
