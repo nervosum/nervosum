@@ -113,6 +113,7 @@ class PydZipImporter(zipimport.zipimporter):
             fakepath = self.archive + os.sep + fullpath
 
             data = self.get_data(fullpath)
+            data_bytes = str.encode(data)
             if ".so" in suffix:
                 extra_libs = []
                 module_name = fullpath.split("/")[0]
@@ -126,7 +127,6 @@ class PydZipImporter(zipimport.zipimporter):
                     if (dylib_dr in x) and ".so" in str(x)
                 ]
 
-                # if (dylib_dr in x) and str(x).endswith(".dylib")
                 for lib_path in dylib_files:
                     new_lib_path = os.path.join(
                         tmp_library_folder.name, lib_path
@@ -141,9 +141,10 @@ class PydZipImporter(zipimport.zipimporter):
                             parents=True, exist_ok=True
                         )
                         lib_data = self.get_data(lib_path)
+                        lib_data_bytes = str.encode(lib_data)
 
-                        with open(new_lib_path, "w") as f:
-                            f.write(lib_data)
+                        with open(new_lib_path, "wb") as f:
+                            f.write(lib_data_bytes)
                             f.flush()
 
                     extra_libs.append((lib_path, new_lib_path))
@@ -153,8 +154,10 @@ class PydZipImporter(zipimport.zipimporter):
                 temporary_folder_loader.add_temporary_folder_data(
                     fullname,
                     so_path=fullpath,
-                    so_content=data,
+                    so_content=data_bytes,
                     extra_libs=extra_libs,
+                    prefix=self.prefix,
+                    archive=self.archive,
                 )
                 return (
                     temporary_folder_loader,
@@ -181,12 +184,14 @@ class PydZipImporter(zipimport.zipimporter):
         return super().find_loader(fullname, path)
 
 
-class TemporaryExtensionFileLoader(zipimport.zipimporter):
+class TemporaryExtensionFileLoader(PydZipImporter):
     """An extension file loader which takes a (fake) path and bytearray
     of data. The shared object (given in data) is written to a named
     temporary file before being loaded.
     Based upon `importlib.machinery.ExtensionFileLoader`.
     """
+
+    _files: Dict[str, Tuple]
 
     def __init__(self, path: str) -> None:
         self.path = path
@@ -265,16 +270,21 @@ class TemporaryExtensionFolderLoader(TemporaryExtensionFileLoader):
         self,
         name: str,
         so_path: str,
-        so_content: str,
+        so_content: bytes,
         extra_libs: List[Tuple[str, str]],
+        prefix: str,
+        archive: str,
     ):
         self.folder = tempfile.TemporaryDirectory()
+        self.prefix = prefix
+        self.archive = archive
+        self._files: Dict[str, Tuple] = {}
 
         pathlib.Path(
             os.path.join(self.folder.name, *so_path.split("/")[:-1])
         ).mkdir(parents=True, exist_ok=True)
 
-        with open(os.path.join(self.folder.name, so_path), "w") as f:
+        with open(os.path.join(self.folder.name, so_path), "wb") as f:
             f.write(so_content)
             f.flush()
 

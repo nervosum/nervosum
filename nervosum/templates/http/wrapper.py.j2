@@ -4,7 +4,7 @@ from flask import Flask, request, redirect, url_for
 from typing import Any, Dict
 
 
-from {{ model_module }} import {{ model_class }}
+from {{ src }}.{{ model_module }} import {{ model_class }}
 
 logger = logging.getLogger(__name__)
 app = Flask(__name__)
