@@ -29,12 +29,14 @@ class BatchImageBuilder(ImageBuilder):
             requirements_file=config.requirements,
             platform_tag=config.platform_tag,
         )
+
         utils.write_to_file(
             os.path.join(self.target_dir, "pydzipimport_linux.py"),
             utils.get_pkg_file("batch", "pydzipimport_linux.py").decode(
                 "utf-8"
             ),
         )
+
         utils.write_to_file(
             os.path.join(self.target_dir, "wrapper.py"), wrapper_file
         )
