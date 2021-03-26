@@ -45,7 +45,8 @@ if __name__ == "__main__":
 
         predictions = spark_df.mapInPandas(predict, schema="prediction int")
         predictions.write.mode("overwrite").format("csv").save(args.output_path)
-
+        predictions.show(truncate=False)
+        print(f"TIME: {time.time() - start}")
         logger.info(f"TIME: {time.time() - start}")
     else:
         logger.info(
