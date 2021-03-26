@@ -113,8 +113,7 @@ class PydZipImporter(zipimport.zipimporter):
             fakepath = self.archive + os.sep + fullpath
 
             data = self.get_data(fullpath)
-            data_bytes = str.encode(data)
-            if ".so" in suffix:
+            if ".so" in suffix and isinstance(data, bytes):
                 extra_libs = []
                 module_name = fullpath.split("/")[0]
                 if module_name == "sklearn":
@@ -141,11 +140,10 @@ class PydZipImporter(zipimport.zipimporter):
                             parents=True, exist_ok=True
                         )
                         lib_data = self.get_data(lib_path)
-                        lib_data_bytes = str.encode(lib_data)
-
-                        with open(new_lib_path, "wb") as f:
-                            f.write(lib_data_bytes)
-                            f.flush()
+                        if isinstance(lib_data, bytes):
+                            with open(new_lib_path, "wb") as f:
+                                f.write(lib_data)
+                                f.flush()
 
                     extra_libs.append((lib_path, new_lib_path))
                 temporary_folder_loader = TemporaryExtensionFolderLoader(
@@ -154,7 +152,7 @@ class PydZipImporter(zipimport.zipimporter):
                 temporary_folder_loader.add_temporary_folder_data(
                     fullname,
                     so_path=fullpath,
-                    so_content=data_bytes,
+                    so_content=data,
                     extra_libs=extra_libs,
                     prefix=self.prefix,
                     archive=self.archive,
