@@ -31,16 +31,3 @@ def test_create_target_dir_exists(tmp_path) -> None:
 
     utils.create_dir(d, mode="overwrite")
     assert len(os.listdir(str(d))) == 0
-
-
-def test_copy_file(tmp_path, image_builder) -> None:
-    target = tmp_path / "target"
-    target.mkdir()
-    source = tmp_path / "source"
-    source.mkdir()
-    IB = image_builder(sd=None, td=target)
-    source_file = source / "file"
-    source_file.write_text("content")
-    IB.copy(source_file)
-    copied_source = target / "file"
-    assert copied_source.exists()
