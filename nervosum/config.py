@@ -10,6 +10,24 @@ class SchemaField(BaseModel):
     type: str
 
 
+class DeploymentField(BaseModel):
+    mode: str
+    platform_tag: Optional[str] = None
+
+    @validator("mode")
+    def mode_in_http_batch(cls, v: str):
+        if v not in ["batch", "http"]:
+            raise ValueError(f"Mode {v} not yet supported")
+        return v
+
+    @validator("platform_tag")
+    def check_platform_tag(cls, v, values):
+        if values["mode"] == "batch":
+            if v is None:
+                raise ValueError("Must provide platform tag")
+        return v
+
+
 class Interface(BaseModel):
     model_module: str
     model_class: str
@@ -23,20 +41,13 @@ class Interface(BaseModel):
 
 class NervosumConfig(BaseModel):
     name: str
-    mode: str
+    deployment: DeploymentField
     src: str
     tag: Optional[str] = None
     interface: Interface
     requirements: str
     input_schema: List[SchemaField]
     output_schema: Union[List[SchemaField], SchemaField]
-    platform_tag: Optional[str] = None
-
-    @validator("mode")
-    def mode_in_http_batch(cls, v: str):
-        if v not in ["batch", "http"]:
-            raise ValueError(f"Mode {v} not yet supported")
-        return v
 
     @validator("src")
     def replace_slash_with_dot(cls, v: str):

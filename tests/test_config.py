@@ -22,9 +22,9 @@ def generate_config() -> Callable:
         config = f"""
 name: {name if name else 'a_name'}
 
-mode: {mode if mode else 'batch'}
-
-{"platform_tag: " + platform_tag if platform_tag else ""}
+deployment:
+  mode: {mode if mode else 'batch'}
+  {"platform_tag: " + platform_tag if platform_tag else ""}
 
 tag: {tag if tag else 'a_tag'}
 
@@ -57,10 +57,10 @@ def test_get_config_default(tmp_path, generate_config) -> None:
     config = get_config(file)
     assert isinstance(config, NervosumConfig)
     assert config.name == "a_name"
-    assert config.mode == "batch"
+    assert config.deployment.mode == "batch"
     assert config.src == "a_src"
     assert config.tag == "a_tag"
-    assert config.platform_tag is None
+    assert config.deployment.platform_tag is None
     assert isinstance(config.interface, Interface)
     assert config.interface.model_module == "a_module"
     assert config.interface.model_class == "a_class"
@@ -76,14 +76,14 @@ def test_get_config_mode_batch(tmp_path, generate_config) -> None:
     file = tmp_path / "file"
     file.write_text(generate_config(mode="batch"))
     config = get_config(file)
-    assert config.mode == "batch"
+    assert config.deployment.mode == "batch"
 
 
 def test_get_config_mode_http(tmp_path, generate_config) -> None:
     file = tmp_path / "file"
     file.write_text(generate_config(mode="http"))
     config = get_config(file)
-    assert config.mode == "http"
+    assert config.deployment.mode == "http"
 
 
 def test_get_config_mode_unsupported(tmp_path, generate_config) -> None:
