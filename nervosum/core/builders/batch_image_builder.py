@@ -27,7 +27,7 @@ class BatchImageBuilder(ImageBuilder):
             self.mode,
             "Dockerfile.j2",
             requirements_file=config.requirements,
-            platform_tag=config.platform_tag,
+            platform_tag=config.deployment.platform_tag,
         )
 
         utils.write_to_file(

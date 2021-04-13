@@ -13,15 +13,15 @@ def execute(args: argparse.Namespace):
     config = get_config(config_file)
 
     with tempfile.TemporaryDirectory(dir=os.path.abspath(args.dir)) as td:
-        if config.mode == "batch":
+        if config.deployment.mode == "batch":
             builder: ImageBuilder = BatchImageBuilder(
                 source_dir=args.dir, target_dir=td
             )
-        elif config.mode == "http":
+        elif config.deployment.mode == "http":
             builder = FlaskImageBuilder(source_dir=args.dir, target_dir=td)
         else:
             raise NotImplementedError(
-                f"Currently no support for mode {config.mode}"
+                f"Currently no support for mode {config.deployment.mode}"
             )
 
         builder.generate_wrapper_files(config)
