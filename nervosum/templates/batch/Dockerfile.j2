@@ -34,6 +34,7 @@ ENV PATH=/usr/local/lib/python3.8/dist-packages/pyspark/bin/:/usr/local/lib/pyth
 ENV PYSPARK_PYTHON=python3
 ENV PYTHONPATH=$PYTHONPATH:/app
 
-CMD spark-submit  --master local[*] \
-    --py-files ./model_dependencies.zip \
-    wrapper.py --source_path /app/data/input.csv --output_path /app/data/output.csv
+CMD  spark-submit  --master local[*]\
+     --py-files ./model_dependencies.zip \
+     wrapper.py --source_path /app/data/input.csv \
+     --output_path /app/data/output.csv
