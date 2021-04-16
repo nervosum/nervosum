@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 from abc import ABC, abstractmethod
@@ -32,7 +33,7 @@ class ImageBuilder(ABC):
         logger.info("Building docker image")
 
         os.chdir(self.target_dir)
-        client.images.build(
+        build_image = client.api.build(
             path=".",
             labels={
                 "owner": "nervosum",
@@ -43,3 +44,10 @@ class ImageBuilder(ABC):
             tag=[f"nervosum/{config.name.lower()}:{config.tag}"],
             quiet=False,
         )
+        for msg in build_image:
+            msgs = msg.decode("utf8").split("\r\n")
+            for line in msgs:
+                if line:
+                    line_dict = json.loads(line)
+                    if "stream" in line_dict:
+                        print(line_dict["stream"], end="")

@@ -40,8 +40,8 @@ def execute(args: argparse.Namespace) -> None:
 
     container = client.containers.run(latest_image, detach=True, **conf)
     add_kill_signal(container)
-    for a in container.attach(stdout=True, stream=True):
-        print(a.decode("utf-8"), end="")
+    for msg in container.attach(stdout=True, stream=True):
+        print(msg.decode("utf-8"), end="")
 
 
 def add_kill_signal(container: Container):
