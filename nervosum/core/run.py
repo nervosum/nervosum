@@ -9,6 +9,7 @@ from dateutil import parser as datetime_parser
 from docker.models.containers import Container
 from docker.models.images import Image
 
+from nervosum.core import utils
 from nervosum.core.list import filter_images, get_images
 
 logger = logging.getLogger(__name__)
@@ -40,12 +41,10 @@ def execute(args: argparse.Namespace) -> None:
 
     container = client.containers.run(latest_image, detach=True, **conf)
     add_kill_signal(container)
-    for msg in container.attach(stdout=True, stream=True):
-        print(msg.decode("utf-8"), end="")
+    utils.print_container_stream(container.attach(stdout=True, stream=True))
 
 
 def add_kill_signal(container: Container):
-    # def signal_handler(sig: int, frame: types.FrameType) -> None:
     def signal_handler(*args: Any, **kwargs: Any) -> None:
         logger.info("\rStopping container...")
         container.stop(timeout=0)

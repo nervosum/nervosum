@@ -69,3 +69,8 @@ def print_build_stream(build_stream) -> None:
                 line_dict = json.loads(line)
                 if "stream" in line_dict:
                     print(line_dict["stream"], end="")
+
+
+def print_container_stream(container_stream) -> None:
+    for msg in container_stream:
+        print(msg.decode("utf-8"), end="")
