@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import pkgutil
@@ -58,3 +59,13 @@ def get_pkg_file(mode: str, file: str) -> bytes:
         raise FileNotFoundError(
             f"Could not find template " f"file templates/{mode}/{file}"
         )
+
+
+def print_build_stream(build_stream) -> None:
+    for msg in build_stream:
+        msgs = msg.decode("utf8").split("\r\n")
+        for line in msgs:
+            if line:
+                line_dict = json.loads(line)
+                if "stream" in line_dict:
+                    print(line_dict["stream"], end="")
