@@ -36,5 +36,5 @@ ENV PYTHONPATH=$PYTHONPATH:/app
 
 CMD  spark-submit  --master local[*]\
      --py-files ./model_dependencies.zip \
-     wrapper.py --source_path /app/data/input.csv \
-     --output_path /app/data/output.csv
+     wrapper.py --source_path $INPUT_DIR \
+     --output_path $OUTPUT_DIR

@@ -67,6 +67,19 @@ def configure_parser_run(sub_parsers: argparse._SubParsersAction) -> None:
     p.add_argument(
         "-n", "--name", action="store", help="Name of image to run",
     )
+    p.add_argument(
+        "-e",
+        "--env",
+        action="append",
+        help="Environment variable(s) to pass to container. -e ENV=value",
+    )
+    p.add_argument(
+        "-v",
+        "--volume",
+        action="append",
+        help="Volume(s) to mount. -v local:container",
+    )
+
     p.set_defaults(nervosum_module="nervosum.core.run")
 
 

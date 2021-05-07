@@ -37,6 +37,14 @@ def execute(args: argparse.Namespace) -> None:
     if latest_image.labels["mode"] == "http":
         conf["ports"] = {"5000/tcp": 5000}
 
+    if args.env:
+        print(args.env)
+        conf["environment"] = args.env
+
+    if args.volume:
+        print(args.volume)
+        conf["volumes"] = args.volume
+
     logger.info(f"Running image {latest_image.short_id}")
 
     container = client.containers.run(latest_image, detach=True, **conf)
